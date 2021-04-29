@@ -31,15 +31,15 @@ module.exports = function (app) {
 
     app.use(cors(corsOptions));
     app.use(express.json());
-    app.use('/auth', auth);
-    app.use('/home', home);
-    app.use('/notifications', notifications);
-    app.use('/users', users);
-    app.use('/brands', brands);
-    app.use('/catalogues', catalogues);
-    app.use('/customers', customers);
-    app.use('/setups', setups);
-    app.use('/tags', tags);
+    app.use('/api/auth', auth);
+    app.use('/api/home', home);
+    app.use('/api/notifications', notifications);
+    app.use('/api/users', users);
+    app.use('/api/brands', brands);
+    app.use('/api/catalogues', catalogues);
+    app.use('/api/customers', customers);
+    app.use('/api/setups', setups);
+    app.use('/api/tags', tags);
 
 }
 

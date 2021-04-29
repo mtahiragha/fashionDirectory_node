@@ -1,62 +1,47 @@
-const jwt = require('jsonwebtoken');
-const auth = require('../middleware/auth');
-const bcrypt = require('bcrypt');
+const config = require('../startup/config');
+const { User } = require('../models/user');
 const express = require('express');
-const _ = require('lodash');
+const _ = require("lodash");
+const bcrypt = require('bcrypt');
+const router = express.Router();
+const { INVALID_INPUT } = require('../helpers/app_messages');
 
-const router = express.Router(); // instead this will work.
+router.post('/', async (req, res) => {
 
-var SUCCESS = { code: 1, success: true, message: "Success", result: null };
-var FAIL = { code: 0, success: false, message: "Fail" };
-var SOME_THONG_WENTWRONG = { code: 0, success: false, message: "Something went wrong" };
+    const isValidUser = validate(req.body);
 
-var LOGIN = { code: 1, success: true, message: "Success", result: null, token: null };
-var LOGIN_FAIL = { code: 0, success: false, message: "Invalid Username or Password", result: null, token: null };
+    INVALID_INPUT.message = "'Invalid user name or password.'"
 
-var INVALID_INPUT = { code: 0, success: false, message: "Invalid input's", result: null };
+    if (!isValidUser) return res.status(400).send(INVALID_INPUT);
 
-router.post('/api/auth', async (req, res) => {
+    let user = await User.findOne({ email: req.body.email });
+    if (!user) return res.status(400).send(INVALID_INPUT);
 
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        LOGIN_FAIL.result = req.body;
-        return res.send(LOGIN_FAIL);
+    const validPassword = await bcrypt.compare(req.body.password, user.password)
+    if (!validPassword) {
+        return res.status(400).send(INVALID_INPUT);
     }
 
-    try {
-
-        const data = { ...req.body };
-        var params = [data.password, data.email]
-
-        var userQuery = `SELECT users.id, password, users.email FROM users  WHERE email = '${email}';`;
-        var result = await database.query(userQuery);
-
-        var isValidPassword = await bcrypt.compare(data.password, result[0].password);
-
-        if (!isValidPassword) {
-            return res.send(LOGIN_FAIL);
-        }
-
-        let query = `SELECT users.*,  roles.name as rolename FROM users INNER JOIN roles ON users.role_id = roles.id  WHERE email = '${email}' ; `;
-        var result = await database.query(query, params);
-
-        if (!result[0]) {
-            return res.send(LOGIN_FAIL);
-        }
-
-        var token = jwt.sign({ id: result[0].id }, "nodeSecretKey");
-        LOGIN.token = token;
-        LOGIN.result = result[0];
-
-        return res.send(LOGIN);
-
-    }
-    catch (error) {
-        return res.send(SOME_THONG_WENTWRONG);
-    }
+    const token = await generateAuthToken(user._id);
+    res.status(200).send(token);
 
 });
+
+function validate(req) {
+    const { email, password } = req;
+
+    if (!email || !password)
+        return false;
+
+    return true;
+
+};
+
+generateAuthToken = async (id) => {
+    const token = jwt.sign({ _id: id }, 'node_secureJwtKey') // config.get('jwtPrivateKey'));
+    return token;
+}
+
 
 
 module.exports = router;
