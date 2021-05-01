@@ -5,11 +5,13 @@ const brandSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        unique: true
     },
 
     brand_id: {
         type: String,
         require: true,
+        unique: true
     },
 
     active: {
@@ -42,6 +44,7 @@ const brandSchema = new mongoose.Schema({
     tags: [
         {
             type: mongoose.Schema.Types.ObjectId,
+            title: String,
             ref: "Tag"
         }
     ]
