@@ -5,11 +5,13 @@ const tagSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        unique: true
     },
 
     tag_id: {
         type: String,
         require: true,
+        unique: true
     },
 
     is_main: {
