@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
 
     const isValidUser = validate(req.body);
 
-    INVALID_INPUT.message = "'Invalid email or password.'"
+    INVALID_INPUT.message = "Invalid email or password."
 
     if (!isValidUser) return res.status(400).send(INVALID_INPUT);
 
@@ -26,14 +26,13 @@ router.post('/', async (req, res) => {
         return res.status(400).send(INVALID_INPUT);
     }
 
-
     user = new User(_.pick(req.body, ['name', 'email', 'password']));
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     await user.save()
 
     let token = await generateAuthToken(user._id);
-    token = await jwt.sign({ _id: user._id }, 'node_secureJwtKey') //config.get('jwtPrivateKey'));
+    token = await jwt.sign({ _id: user._id }, process.env.NODE_SECRET_KEY);
     res.header('x-auth-token', token).status(200).send(_.pick(user, ['_id', 'name', 'email', 'password']));
 
 });
@@ -55,7 +54,7 @@ function validate(req) {
 };
 
 generateAuthToken = async (id) => {
-    const token = jwt.sign({ _id: id }, 'node_secureJwtKey') // config.get('jwtPrivateKey'));
+    const token = jwt.sign({ _id: id }, process.env.NODE_SECRET_KEY)//'node_secureJwtKey') // config.get('jwtPrivateKey'));
     return token;
 }
 
