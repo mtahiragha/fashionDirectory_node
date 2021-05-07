@@ -5,47 +5,92 @@ const { Brand } = require('../models/brand');
 const path = require('path');
 const multer = require('multer');
 
-const imagePath = './public/uploads/brands/images';
-const imageUrl = 'http://localhost:3200/uploads/brands/images';
+const { getStorage } = require('../helpers/upload.helper')
 
 let { SOME_THONG_WENTWRONG, SUCCESS, INVALID_INPUT } = require('../helpers/app_messages');
 
 const storage = multer.diskStorage({
-    destination: imagePath,
+    destination: './public/uploads/brand/images',
     filename: function (req, file, cb) {
         cb(null, `${file.fieldname}_${Date.now()}_${path.extname(file.originalname)}`);
     }
 });
 
-const upload = multer({
-    storage: storage,
+const basePath = __dirname + '/uploads/brand';
+const baseUrl = 'http://localhost:3200/uploads/brand';
+
+const uploadImage = multer({
+    storage: getStorage(`${basePath}/images`),
+    storage: storage,//getStorage(`${basePath}/images`),
     limits: {
         fileSize: 1000000,
     }
-}).single('image');
+}).array('images');
 
-router.post("/upload", (req, res) => {
-    upload(req, res, function (err) {
+const uploadVideos = multer({
+    storage: getStorage(`${basePath}/videos`),
+    limits: {
+        fileSize: 1000000,
+    }
+}).array('videos');
+
+const uploadPdfs = multer({
+    storage: getStorage(`${basePath}/pdf`),
+    limits: {
+        fileSize: 1000000,
+    }
+}).array('pdfs');
+
+router.post("/upload_images", (req, res) => {
+    uploadImage(req, res, function (err) {
         if (err) {
-            return res.status(200).send("ERROR");
+            SOME_THONG_WENTWRONG.message = "Something went wrong.."
+            return res.status(200).send(SOME_THONG_WENTWRONG);
         }
-        req.file.fullpath = `${imageUrl}/${req.file.filename}`;
-        SUCCESS.result = req.file;
-        res.status(200).send(SUCCESS);
+
+        req.files.forEach(file => {
+            file.fullPath = `${baseUrl}/images/${file.filename}`;
+        });
+
+        SUCCESS.files = req.files;
+        return res.status(200).send(SUCCESS);
+
     });
 });
 
-// router.post("/upload1", upload.array('image'), (req, res) => {
+router.post("/upload_videos", (req, res) => {
+    uploadImage(req, res, function (err) {
+        if (err) {
+            SOME_THONG_WENTWRONG.message = "Something went wrong.."
+            return res.status(200).send(SOME_THONG_WENTWRONG);
+        }
 
-//     req.files.forEach(file => {
-//         file.fullpath = `${imageUrl}/${file.filename}`;
-//     });
+        req.files.forEach(file => {
+            file.fullPath = `${baseUrl}/videos/${file.filename}`;
+        });
 
-//     SUCCESS.uploaded = req.files.length;
-//     SUCCESS.result = req.files;
-//     res.status(200).send(SUCCESS);
+        SUCCESS.files = req.files;
+        return res.status(200).send(SUCCESS);
 
-// });
+    });
+});
+
+router.post("/upload_pdfs", (req, res) => {
+    uploadImage(req, res, function (err) {
+        if (err) {
+            SOME_THONG_WENTWRONG.message = "Something went wrong.."
+            return res.status(200).send(SOME_THONG_WENTWRONG);
+        }
+
+        req.files.forEach(file => {
+            file.fullPath = `${baseUrl}/pdf/${file.filename}`;
+        });
+
+        SUCCESS.files = req.files;
+        return res.status(200).send(SUCCESS);
+
+    });
+});
 
 router.get("/:id", async (req, res) => {
     try {
