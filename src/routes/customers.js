@@ -2,26 +2,18 @@ const express = require('express');
 const router = express.Router();
 const { Customer } = require('../models/customer');
 
-const path = require('path');
+
 const multer = require('multer');
 
 const { getStorage } = require('../helpers/upload.helper')
 
 let { SOME_THONG_WENTWRONG, SUCCESS, INVALID_INPUT } = require('../helpers/app_messages');
 
-const storage = multer.diskStorage({
-    destination: './public/uploads/customer/images',
-    filename: function (req, file, cb) {
-        cb(null, `${file.fieldname}_${Date.now()}_${path.extname(file.originalname)}`);
-    }
-});
-
 const basePath = __dirname + '/uploads/customers';
 const baseUrl = 'http://localhost:3200/uploads/customers';
 
 const uploadImage = multer({
     storage: getStorage(`${basePath}/images`),
-    storage: storage,//getStorage(`${basePath}/images`),
     limits: {
         fileSize: 1000000,
     }
