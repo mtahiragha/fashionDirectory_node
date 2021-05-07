@@ -5,6 +5,7 @@ const customerSchema = new mongoose.Schema({
     email_id: {
         type: String,
         required: true,
+        unique: true
     },
 
     fb_id: {
@@ -30,7 +31,8 @@ const customerSchema = new mongoose.Schema({
     },
 
     date_of_birth: {
-        type: Date
+        type: Date,
+        require: true
     },
 
     notifications_enabled: {
@@ -85,7 +87,7 @@ const customerSchema = new mongoose.Schema({
     },
 });
 
-const Catalogue = new mongoose.model("Catalogue", catalogueSchema);
-exports.Catalogue = Catalogue;
+const Customer = new mongoose.model("Customer", customerSchema);
+exports.Customer = Customer;
 
 

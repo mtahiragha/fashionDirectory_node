@@ -41,8 +41,8 @@ const uploadPdfs = multer({
     }
 }).array('pdfs');
 
-router.post("/upload_images", (req, res) => {
-    uploadImage(req, res, function (err) {
+router.post("/upload_images", async (req, res) => {
+    await uploadImage(req, res, function (err) {
         if (err) {
             SOME_THONG_WENTWRONG.message = "Something went wrong.."
             return res.status(200).send(SOME_THONG_WENTWRONG);
@@ -58,8 +58,8 @@ router.post("/upload_images", (req, res) => {
     });
 });
 
-router.post("/upload_videos", (req, res) => {
-    uploadImage(req, res, function (err) {
+router.post("/upload_videos", async (req, res) => {
+    await uploadImage(req, res, function (err) {
         if (err) {
             SOME_THONG_WENTWRONG.message = "Something went wrong.."
             return res.status(200).send(SOME_THONG_WENTWRONG);
@@ -75,8 +75,8 @@ router.post("/upload_videos", (req, res) => {
     });
 });
 
-router.post("/upload_pdfs", (req, res) => {
-    uploadImage(req, res, function (err) {
+router.post("/upload_pdfs", async (req, res) => {
+    await uploadImage(req, res, function (err) {
         if (err) {
             SOME_THONG_WENTWRONG.message = "Something went wrong.."
             return res.status(200).send(SOME_THONG_WENTWRONG);
@@ -175,39 +175,5 @@ router.put("/", async (req, res) => {
 router.delete("/", async (req, res) => {
     return res.status(200).send("Delete Brands");
 });
-
-// router.post("/upload", async (req, res) => {
-//     upload(req, res, function (err) {
-//         if (err) {
-//             return res.status(400).send(err);
-//         } else {
-//             console.log(req.file);
-//             res.send("test file is uploaded...");
-//         }
-
-
-//         // req.file contains information of uploaded file
-//         // req.body contains information of text fields, if there were any
-
-//         // if (req.fileValidationError) {
-//         //     return res.send(req.fileValidationError);
-//         // }
-//         // else if (!req.file) {
-//         //     return res.send('Please select an image to upload');
-//         // }
-//         // else if (err instanceof multer.MulterError) {
-//         //     return res.send(err);
-//         // }
-//         // else if (err) {
-//         //     return res.send(err);
-//         // }
-
-//         // Display uploaded image for user validation
-//         //res.send(`You have uploaded this image: <hr/><img src="${req.file.path}" width="500"><hr /><a href="./">Upload another image</a>`);
-
-//     });
-// });
-
-
 
 module.exports = router;
