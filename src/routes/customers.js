@@ -118,15 +118,15 @@ router.post("/", async (req, res) => {
 router.put("/", async (req, res) => {
     try {
 
-        let { email_id, first_name, last_name, active, gender, date_of_birth } = req.body;
+        let { id, email_id, first_name, last_name, active, gender, date_of_birth } = req.body;
 
-        if (!email_id || !first_name || !last_name || !active || !gender || !date_of_birth) {
+        if (!id || !email_id || !first_name || !last_name || !active || !gender || !date_of_birth) {
             return res.status(400).send(INVALID_INPUT);
         }
 
         var data = req.body;
         data.updated_at = new Date();
-        let result = await Customer.findOneAndUpdate(data._id, data);
+        let result = await Customer.findByIdAndUpdate(data.id, data);
 
         SUCCESS.result = result;
         return res.status(200).send(SUCCESS);

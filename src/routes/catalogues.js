@@ -1,8 +1,81 @@
 const express = require('express');
 const router = express.Router();
 const { Catalogue } = require('../models/catalogue');
-
 let { SOME_THONG_WENTWRONG, SUCCESS, INVALID_INPUT } = require('../helpers/app_messages');
+
+const multer = require('multer');
+const { getStorage } = require('../helpers/upload.helper')
+
+
+const basePath = __dirname + '/uploads/brands';
+const baseUrl = 'http://localhost:3200/uploads/brands';
+
+const uploadImage = multer({
+    storage: getStorage(`${basePath}/images`),
+    limits: {
+        fileSize: 1000000,
+    }
+}).single('images');
+
+const uploadVideos = multer({
+    storage: getStorage(`${basePath}/videos`),
+    limits: {
+        fileSize: 1000000,
+    }
+}).array('videos');
+
+const uploadPdfs = multer({
+    storage: getStorage(`${basePath}/pdf`),
+    limits: {
+        fileSize: 1000000,
+    }
+}).single('pdfs');
+
+router.post("/upload_images", async (req, res) => {
+    await uploadImage(req, res, function (err) {
+        if (err) {
+            SOME_THONG_WENTWRONG.message = "Something went wrong.."
+            return res.status(200).send(SOME_THONG_WENTWRONG);
+        }
+
+        file.fullPath = `${baseUrl}/images/${req.file.filename}`;
+
+        SUCCESS.file = req.file;
+        return res.status(200).send(SUCCESS);
+
+    });
+});
+
+router.post("/upload_videos", async (req, res) => {
+    await uploadImage(req, res, function (err) {
+        if (err) {
+            SOME_THONG_WENTWRONG.message = "Something went wrong.."
+            return res.status(200).send(SOME_THONG_WENTWRONG);
+        }
+
+        req.files.forEach(file => {
+            file.fullPath = `${baseUrl}/videos/${file.filename}`;
+        });
+
+        SUCCESS.files = req.files;
+        return res.status(200).send(SUCCESS);
+
+    });
+});
+
+router.post("/upload_pdfs", async (req, res) => {
+    await uploadImage(req, res, function (err) {
+        if (err) {
+            SOME_THONG_WENTWRONG.message = "Something went wrong.."
+            return res.status(200).send(SOME_THONG_WENTWRONG);
+        }
+
+        file.fullPath = `${baseUrl}/pdf/${req.file.filename}`;
+        SUCCESS.file = req.file;
+        return res.status(200).send(SUCCESS);
+
+    });
+});
 
 router.get("/:id", async (req, res) => {
     try {
@@ -72,7 +145,7 @@ router.put("/", async (req, res) => {
 
         var data = req.body;
         data.updated_at = new Date();
-        let result = await Catalogue.findOneAndUpdate(data._id, data);
+        let result = await Catalogue.findByIdAndUpdate(data.id, data);
 
         SUCCESS.result = result;
         return res.status(200).send(SUCCESS);

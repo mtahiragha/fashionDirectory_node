@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const { Brand } = require('../models/brand');
-const multer = require('multer');
-
-const { getStorage } = require('../helpers/upload.helper')
 
 let { SOME_THONG_WENTWRONG, SUCCESS, INVALID_INPUT } = require('../helpers/app_messages');
 
-const basePath = __dirname + '/uploads/brand';
-const baseUrl = 'http://localhost:3200/uploads/brand';
+const multer = require('multer');
+const { getStorage } = require('../helpers/upload.helper')
+
+
+const basePath = __dirname + '/uploads/brands';
+const baseUrl = 'http://localhost:3200/uploads/brands';
 
 const uploadImage = multer({
     storage: getStorage(`${basePath}/images`),
@@ -16,6 +17,13 @@ const uploadImage = multer({
         fileSize: 1000000,
     }
 }).array('images');
+
+const uploadLogo = multer({
+    storage: getStorage(`${basePath}/logo`),
+    limits: {
+        fileSize: 1000000,
+    }
+}).single('logo');
 
 const uploadVideos = multer({
     storage: getStorage(`${basePath}/videos`),
@@ -30,6 +38,19 @@ const uploadPdfs = multer({
         fileSize: 1000000,
     }
 }).array('pdfs');
+
+router.post("/upload_logo", async (req, res) => {
+    await uploadLogo(req, res, function (err) {
+        if (err) {
+            SOME_THONG_WENTWRONG.message = "Something went wrong.."
+            return res.status(200).send(SOME_THONG_WENTWRONG);
+        }
+
+        file.fullPath = `${baseUrl}/logo/${req.file.filename}`;
+        SUCCESS.file = req.file;
+        return res.status(200).send(SUCCESS);
+    });
+});
 
 router.post("/upload_images", async (req, res) => {
     await uploadImage(req, res, function (err) {
@@ -150,7 +171,7 @@ router.put("/", async (req, res) => {
 
         var data = req.body;
         data.updated_at = new Date();
-        let result = await Brand.findOneAndUpdate(data._id, data);
+        let result = await Brand.findByIdAndUpdate(data.id, data);
 
         SUCCESS.result = result;
         return res.status(200).send(SUCCESS);

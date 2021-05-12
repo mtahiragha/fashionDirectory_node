@@ -51,7 +51,10 @@ const catalogueSchema = new mongoose.Schema({
     },
 
     tags: [
-        { type: mongoose.Schema.Types.ObjectId, ref: "Tag" }
+        {
+            type: mongoose.Schema.Types.ObjectId, ref: "Tag",
+            title: String
+        }
     ],
 
     catalogue_videos: [String]
