@@ -38,7 +38,7 @@ function validate(req) {
 };
 
 generateAuthToken = async (id) => {
-    const token = jwt.sign({ _id: id }, 'node_secureJwtKey') // config.get('jwtPrivateKey'));
+    const token = jwt.sign({ _id: id }, process.env.NODE_SECRET_KEY) // config.get('jwtPrivateKey'));
     return token;
 }
 

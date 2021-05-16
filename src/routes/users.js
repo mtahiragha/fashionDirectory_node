@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken');
 const config = require('../startup/config');
 const auth = require('../middleware/auth');
-const { User } = require('../models/user');
 const express = require('express');
 const _ = require("lodash");
 const bcrypt = require('bcrypt');
 const router = express.Router();
+
+const { User } = require('../models/user');
 const { INVALID_INPUT } = require('../helpers/app_messages');
 
 //routes will prepend with ==> /api/user
