@@ -13,6 +13,11 @@ const brandSchema = new mongoose.Schema({
         unique: true
     },
 
+    reviews: {
+        type: Integer,
+        default: 0
+    },
+
     active: {
         type: Boolean
     },
@@ -37,6 +42,33 @@ const brandSchema = new mongoose.Schema({
     },
 
     cover_images: [String],
+
+
+    isDesigner: {
+        type: Boolean,
+        default: false
+    },
+
+    isShowVideos: {
+        type: Boolean,
+        default: false
+    },
+
+    isShowVideos: {
+        type: Boolean,
+        default: false
+    },
+
+    isShowComments: {
+        type: Boolean,
+        default: false
+    },
+
+    isShowLocations: {
+        type: Boolean,
+        default: false
+    },
+
 
     videos: [String],
 

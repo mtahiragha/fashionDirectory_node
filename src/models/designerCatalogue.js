@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const catalogueSchema = new mongoose.Schema({
+const designerCatalogueSchema = new mongoose.Schema({
 
     title: {
         type: String,
@@ -14,16 +14,6 @@ const catalogueSchema = new mongoose.Schema({
 
     active: {
         type: Boolean
-    },
-
-    season: {
-        type: String,
-        require: true
-    },
-
-    year: {
-        type: Number,
-        require: true
     },
 
     created_at: {
@@ -49,6 +39,17 @@ const catalogueSchema = new mongoose.Schema({
         type: Number
     },
 
+    season: {
+        type: String,
+        require: true
+    },
+
+    year: {
+        type: Number,
+        require: true
+    },
+
+
     display_images: [String],
 
     brand: {
@@ -71,7 +72,7 @@ const catalogueSchema = new mongoose.Schema({
 
 });
 
-const Catalogue = new mongoose.model("Catalogue", catalogueSchema);
-exports.Catalogue = Catalogue;
+const DesignerCatalogue = new mongoose.model("Designer_Catalogue", designerCatalogueSchema);
+exports.DesignerCatalogue = DesignerCatalogue;
 
 
