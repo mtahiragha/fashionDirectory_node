@@ -32,3 +32,6 @@ const messageSchema = new mongoose.Schema({
     },
 
 })
+
+const Message = new mongoose.model('Message', messageSchema);
+exports.Message = Message;
