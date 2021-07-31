@@ -5,8 +5,7 @@ const SendMail = require('../helpers/mail.notifications');
 
 router.get('/', async (req, res) => {
     try {
-
-        res.status(200).send("OK");
+        res.status(200).send('OK');
 
     } catch (error) {
         console.log(error);

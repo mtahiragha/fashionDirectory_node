@@ -6,9 +6,8 @@ let { SOME_THONG_WENTWRONG, SUCCESS, INVALID_INPUT } = require('../helpers/app_m
 const multer = require('multer');
 const { getStorage } = require('../helpers/upload.helper')
 
-
-const basePath = __dirname + '/uploads/brands';
-const baseUrl = 'http://localhost:3200/uploads/brands';
+const basePath = './public/uploads/catalogues';
+const baseUrl = 'http://localhost:3200/uploads/catalogues';
 
 const uploadImage = multer({
     storage: getStorage(`${basePath}/images`),
@@ -24,12 +23,12 @@ const uploadVideos = multer({
     }
 }).array('videos');
 
-const uploadPdfs = multer({
-    storage: getStorage(`${basePath}/pdf`),
+const uploadCatalogueImages = multer({
+    storage: getStorage(`${basePath}/catalogueImages`),
     limits: {
         fileSize: 1000000,
     }
-}).single('pdfs');
+}).array('catalogueImages');
 
 router.post("/upload_images", async (req, res) => {
     await uploadImage(req, res, function (err) {
@@ -63,15 +62,18 @@ router.post("/upload_videos", async (req, res) => {
     });
 });
 
-router.post("/upload_pdfs", async (req, res) => {
-    await uploadImage(req, res, function (err) {
+router.post("/upload_catalogue_images", async (req, res) => {
+    await uploadCatalogueImages(req, res, function (err) {
         if (err) {
             SOME_THONG_WENTWRONG.message = "Something went wrong.."
             return res.status(200).send(SOME_THONG_WENTWRONG);
         }
 
-        file.fullPath = `${baseUrl}/pdf/${req.file.filename}`;
-        SUCCESS.file = req.file;
+        req.files.forEach(file => {
+            file.fullPath = `${baseUrl}/catalogueImages/${file.filename}`;
+        });
+
+        SUCCESS.files = req.files;
         return res.status(200).send(SUCCESS);
 
     });

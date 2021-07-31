@@ -7,6 +7,9 @@ const brandSchema = new mongoose.Schema({
         unique: true
     },
 
+    logo: {
+        type: String, require: true
+    },
     brand_id: {
         type: String,
         require: true,
@@ -71,14 +74,15 @@ const brandSchema = new mongoose.Schema({
 
 
     videos: [String],
+    tags: [String],
 
-    tags: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            title: String,
-            ref: "Tag"
-        }
-    ]
+    // tags: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         title: String,
+    //         ref: "Tag"
+    //     }
+    // ]
 });
 
 const Brand = new mongoose.model("Brand", brandSchema);
