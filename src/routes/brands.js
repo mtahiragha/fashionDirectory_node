@@ -8,7 +8,7 @@ const multer = require('multer');
 const { getStorage } = require('../helpers/upload.helper')
 
 
-const basePath = __dirname + '/uploads/brands';
+const basePath = './public/uploads/brands';
 const baseUrl = 'http://localhost:3200/uploads/brands';
 
 const uploadImage = multer({
@@ -17,6 +17,13 @@ const uploadImage = multer({
         fileSize: 1000000,
     }
 }).array('images');
+
+const uploadCoverImage = multer({
+    storage: getStorage(`${basePath}/coverImages`),
+    limits: {
+        fileSize: 1000000,
+    }
+}).array('coverImages');
 
 const uploadLogo = multer({
     storage: getStorage(`${basePath}/logo`),
@@ -45,11 +52,29 @@ router.post("/upload_logo", async (req, res) => {
             SOME_THONG_WENTWRONG.message = "Something went wrong.."
             return res.status(200).send(SOME_THONG_WENTWRONG);
         }
-
-        file.fullPath = `${baseUrl}/logo/${req.file.filename}`;
+        req.file.fullPath = `${baseUrl}/logo/${req.file.filename}`;
         SUCCESS.file = req.file;
         return res.status(200).send(SUCCESS);
     });
+});
+
+router.post("/coverImages", async (req, res) => {
+
+    await uploadCoverImage(req, res, function (err) {
+        if (err) {
+            SOME_THONG_WENTWRONG.message = "Something went wrong.."
+            return res.status(200).send(SOME_THONG_WENTWRONG);
+        }
+
+        req.files.forEach(file => {
+            file.fullPath = `${baseUrl}/coverImages/${file.filename}`;
+        })
+
+        SUCCESS.files = req.files;
+        return res.status(200).send(SUCCESS);
+
+    });
+
 });
 
 router.post("/upload_images", async (req, res) => {
@@ -138,11 +163,12 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
 
     try {
-        let { title, brand_id, active, created_by, cover_images, videos, tags } = req.body;
 
-        if (!title || !brand_id || !active || !created_by || !cover_images || !videos || !tags) {
-            return res.status(400).send(INVALID_INPUT);
-        }
+        let { title, brand_id, active, created_by, logo, cover_images, tags } = req.body;
+
+        // if (!title || !brand_id || !active || !created_by || !cover_images || !logo || !tags) {
+        //     return res.status(400).send(INVALID_INPUT);
+        // }
 
         var data = req.body;
 
@@ -153,6 +179,7 @@ router.post("/", async (req, res) => {
 
         SUCCESS.result = result;
         return res.status(200).send(SUCCESS);
+
 
     } catch (error) {
         SOME_THONG_WENTWRONG.message = error.message;

@@ -46,9 +46,7 @@ const catalogueSchema = new mongoose.Schema({
         ref: "Brand"
     },
 
-    pdf: {
-        type: String
-    },
+    catalogue_images: [String],
 
     tags: [
         {
