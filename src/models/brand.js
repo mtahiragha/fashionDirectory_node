@@ -17,7 +17,7 @@ const brandSchema = new mongoose.Schema({
     },
 
     reviews: {
-        type: Integer,
+        type: Number,
         default: 0
     },
 
